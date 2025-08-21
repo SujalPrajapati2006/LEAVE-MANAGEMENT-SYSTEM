@@ -1,5 +1,6 @@
 package com.example.employeeservice.controller;
 
+import com.example.employeeservice.dto.EmployeeDashboardDTO;
 import com.example.employeeservice.dto.LeaveRequestDTO;
 import com.example.employeeservice.dto.LeaveRequestResponseDTO;
 import com.example.employeeservice.enums.LeaveStatus;
@@ -42,5 +43,12 @@ public class LeaveRequestController {
     public ResponseEntity<?> getLeaveRequestsByStatus(@RequestParam LeaveStatus status){
         List<LeaveRequestResponseDTO> leaveRequest = leaveRequestService.getLeaveRequestsByStatus(status);
         return new ResponseEntity<>(leaveRequest,HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasRole('EMPLOYEE')")
+    @GetMapping("/dashboard/{employeeId}")
+    public ResponseEntity<?> getEmployeeDashboard(@PathVariable Long employeeId) {
+        EmployeeDashboardDTO dashboard = leaveRequestService.getEmployeeDashboard(employeeId);
+        return new ResponseEntity<>(dashboard, HttpStatus.OK);
     }
 }

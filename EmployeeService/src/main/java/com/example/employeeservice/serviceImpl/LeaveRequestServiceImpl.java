@@ -1,13 +1,11 @@
 package com.example.employeeservice.serviceImpl;
 
 import com.example.employeeservice.FeignClient.AdminServiceClient;
-import com.example.employeeservice.dto.EmployeeResponseDTO;
-import com.example.employeeservice.dto.LeaveRequestDTO;
-import com.example.employeeservice.dto.LeaveRequestResponseDTO;
-import com.example.employeeservice.dto.ViewLeaveRequestDTO;
+import com.example.employeeservice.dto.*;
 import com.example.employeeservice.entity.LeaveRequest;
 import com.example.employeeservice.enums.LeaveStatus;
 import com.example.employeeservice.enums.RoleType;
+import com.example.employeeservice.exception.ResourceNotFoundException;
 import com.example.employeeservice.mapper.LeaveRequestMapper;
 import com.example.employeeservice.repository.LeaveRequestRepository;
 import com.example.employeeservice.service.LeaveRequestService;
@@ -15,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -85,6 +84,28 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
                 .collect(Collectors.toList());
     }
 
+    public EmployeeDashboardDTO getEmployeeDashboard(Long employeeId){
+        List<LeaveRequest> requests = leaveRequestRepository.findByEmployeeId(employeeId);
+
+        if (requests.isEmpty()) {
+            throw new ResourceNotFoundException("No leave requests found for employee ID: " + employeeId);
+        }
+
+        Map<LeaveStatus, Long> statusCounts = requests.stream()
+                .collect(Collectors.groupingBy(LeaveRequest::getStatus, Collectors.counting()));
+
+        double totalDays = requests.stream().mapToDouble(LeaveRequest::getNumberOfDays).sum();
+        double totalHours = requests.stream().mapToDouble(LeaveRequest::getNumberOfHours).sum();
+
+        return EmployeeDashboardDTO.builder()
+                .employeeId(employeeId)
+                .employeeEmail(requests.get(0).getEmployeeEmail())
+                .totalLeaveRequests(requests.size())
+                .leaveStatusCounts(statusCounts)
+                .totalLeaveDays(totalDays)
+                .totalLeaveHours(totalHours)
+                .build();
+    }
 
     private long calculateWorkingDays(LocalDate start, LocalDate end) {
         long workingDays = 0;

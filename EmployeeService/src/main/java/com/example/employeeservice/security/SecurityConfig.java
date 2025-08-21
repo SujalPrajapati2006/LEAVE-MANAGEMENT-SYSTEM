@@ -14,7 +14,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import javax.crypto.spec.SecretKeySpec;
 import java.util.Base64;
 
-
 @Configuration
 @EnableMethodSecurity
 public class SecurityConfig {
@@ -27,7 +26,8 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/leave-request").hasRole("EMPLOYEE")
+                        .requestMatchers("/leave-request",
+                                "/leave-request/dashboard/{employeeId}").hasRole("EMPLOYEE")
                         .requestMatchers("/leave-request/update-status/{id}",
                                 "/leave-request/status").hasRole("ADMIN")
                         .anyRequest().authenticated()
