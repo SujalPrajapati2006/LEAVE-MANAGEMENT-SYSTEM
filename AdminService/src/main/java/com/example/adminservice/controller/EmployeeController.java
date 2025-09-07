@@ -7,6 +7,7 @@ import com.example.adminservice.service.LeaveRequestClient;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -106,5 +107,15 @@ public class EmployeeController {
     public ResponseEntity<?> viewLeaveRequestsByStatus(@RequestParam LeaveStatus status){
          List<LeaveRequestResponseDTO> leaveRequest = leaveRequestClient.getLeaveRequestsByStatus(status);
          return new ResponseEntity<>(leaveRequest,HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/get-all-employee-by-page")
+    public ResponseEntity<?> getAllEmployee(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Page<EmployeeResponseDTO> employees = employeeService.getAllEmployee(page, size);
+        return new ResponseEntity<>(employees, HttpStatus.OK);
     }
 }

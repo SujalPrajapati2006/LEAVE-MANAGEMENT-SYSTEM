@@ -4,6 +4,8 @@ import com.example.adminservice.dto.AdminDashboardSummaryDTO;
 import com.example.adminservice.dto.EmployeeRequestDTO;
 import com.example.adminservice.dto.EmployeeResponseDTO;
 import com.example.adminservice.dto.EmployeeUpdateDTO;
+import org.springframework.data.domain.Page;
+
 import java.util.List;
 
 public interface EmployeeService {
@@ -25,4 +27,6 @@ public interface EmployeeService {
     List<EmployeeResponseDTO> findEmployeesByDesignationName(String designationName);
 
     AdminDashboardSummaryDTO getDashboardSummary();
+
+    Page<EmployeeResponseDTO> getAllEmployee(int page, int size);
 }

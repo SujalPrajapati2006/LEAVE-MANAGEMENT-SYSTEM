@@ -13,6 +13,9 @@ import com.example.adminservice.repository.EmployeeRepository;
 import com.example.adminservice.service.AuthServiceClient;
 import com.example.adminservice.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.List;
@@ -141,6 +144,12 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .totalDepartments(totalDepartments)
                 .employeesPerDepartment(employeesPerDepartment)
                 .build();
+    }
+
+    public Page<EmployeeResponseDTO> getAllEmployee(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Employee> employeePage = employeeRepository.findAll(pageable);
+        return employeePage.map(EmployeeMapper::mapToDto);
     }
 
 }

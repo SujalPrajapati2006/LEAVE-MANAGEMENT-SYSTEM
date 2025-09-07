@@ -36,7 +36,8 @@ public class SecurityConfig {
                                 "/employees/designation",
                                 "/employees/summary",
                                 "/employees/leave-request/status/{id}",
-                                "/employees/leave-request/view-by-status").hasRole("ADMIN")
+                                "/employees/leave-request/view-by-status",
+                                "/employees/get-all-employee-by-page").hasRole("ADMIN")
                         .requestMatchers("/employees/{id}").hasRole("EMPLOYEE")
                         .anyRequest().authenticated()
                 )
